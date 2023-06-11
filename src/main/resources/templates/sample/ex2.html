@@ -24,6 +24,12 @@
         <br>
         3.삼항연산자 사용
         <li th:each="dto : ${list}" th:class="${dto.sno % 5 == 0} ? 'target'" th:text="${dto}" ></li>
+        4.블록 처리
+    </ul>
+    <ul>
+        <th:block th:each="dto : ${list}">
+            <li th:text="${dto.sno % 5 == 0} ? ${dto.sno} : ${dto.first}"></li>
+        </th:block>
     </ul>
 </body>
 </html>
