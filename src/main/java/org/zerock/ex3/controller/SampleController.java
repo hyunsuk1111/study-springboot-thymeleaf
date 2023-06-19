@@ -30,7 +30,7 @@ public class SampleController {
                     .sno(i)
                     .first("First...." + i)
                     .last("Last...." + i)
-                    .regDateTime(LocalDateTime.now())
+                    .regTime(LocalDateTime.now())
                     .build();
             return dto;
         }).collect(Collectors.toList());
@@ -46,7 +46,7 @@ public class SampleController {
                 .sno(100L)
                 .first("First...100")
                 .last("Last...100")
-                .regDateTime(LocalDateTime.now())
+                .regTime(LocalDateTime.now())
                 .build();
 
         redirectAttributes.addFlashAttribute("result", "success");
@@ -58,5 +58,10 @@ public class SampleController {
     @GetMapping("/ex3")
     public void ex3(){
         log.info("ex3....");
+    }
+
+    @GetMapping({"/exLayout1", "/exLayout2"})
+    public void exLayout1(){
+        log.info("exLayout1......");
     }
 }

@@ -15,5 +15,5 @@ public class SampleDTO {
 
     private String last;
 
-    private LocalDateTime regDateTime;
+    private LocalDateTime regTime;
 }
