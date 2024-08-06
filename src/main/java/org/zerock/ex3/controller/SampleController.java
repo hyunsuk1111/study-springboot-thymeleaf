@@ -1,14 +1,43 @@
 package org.zerock.ex3.controller;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.zerock.ex3.dto.SampleDTO;
 
-@RestController
-@RequestMapping("/hello")
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+@Controller
+@RequestMapping("/sample")
+@Log4j2
 public class SampleController {
-    @GetMapping
-    public String[] hello() {
-        return new String[]{"Hello", "World"};
+
+    @GetMapping("/ex1")
+    public void ex1() {
+        log.info("ex1........");
+    }
+
+    @GetMapping({"/ex2"})
+    public String exModel1(Model model) {
+        List<SampleDTO> list = LongStream.rangeClosed(1, 20)
+                .mapToObj(i -> {
+                    SampleDTO dto = SampleDTO.builder()
+                            .sno(i)
+                            .first("First " + i)
+                            .last("last " + i)
+                            .regTime(LocalDateTime.now())
+                            .build();
+                    return dto;
+                }).collect(Collectors.toList());
+
+        model.addAttribute("list", list);
+
+        return "sample/ex2";
     }
 }
