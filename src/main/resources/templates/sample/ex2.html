@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .target{
+            background-color : red;
+        }
+    </style>
 </head>
 <body>
     <ul>
@@ -10,6 +15,27 @@
             <!--<span th:text="${dto}"></span>-->
             [[${state.index}]] ------ [[${dto}]]
         </li>
+    </ul>
+    <ul>
+        <li th:each="dto, state : ${list}" >
+            <span th:if="${dto.sno % 5 == 0}" th:text="'zzz'"></span>
+            <span th:unless="${dto.sno % 5 == 0}" th:text="${dto.first}"></span>
+        </li>
+    </ul>
+    <ul>
+        <li th:each="dto, state : ${list}" >
+            <span th:text="${dto.sno % 5 == 0} ? ${dto.sno} : ${dto.first}"></span>
+        </li>
+    </ul>
+    <ul>
+        <li th:each="dto, state : ${list}" >
+            <span th:class="${dto.sno % 5 == 0} ? 'target'" th:text="${dto}"></span>
+        </li>
+    </ul>
+    <ul>
+        <th:block th:each="dto : ${list}">
+            <li th:text="${dto.sno % 5 == 0} ? ${dto.sno} : ${dto.first}"></li>
+        </th:block>
     </ul>
 </body>
 </html>
