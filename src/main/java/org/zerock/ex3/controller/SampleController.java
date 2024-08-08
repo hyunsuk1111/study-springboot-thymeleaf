@@ -60,9 +60,9 @@ public class SampleController {
         return "sample/ex3";
     }
 
-    @GetMapping("/exLayout1")
-    public String exLayout1() {
-        return "sample/exLayout1";
+    @GetMapping({"/exLayout1","/exLayout2","/exTemplate","/exSidebar"})
+    public void exLayout1() {
+        System.out.println("test");
     }
 
     //PathVariable로 맵핑
