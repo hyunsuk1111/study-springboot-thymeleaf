@@ -20,14 +20,14 @@ public class GuestbookRepositoryTest {
     public void save() {
         //given
         LongStream.rangeClosed(1, 300).forEach(i ->{
-            Guestbook build = Guestbook.builder()
+            Guestbook guestbook = Guestbook.builder()
                     .gno(i)
                     .title("Title..." + i)
                     .content("Content..." + i)
                     .writer("user..." + (i % 10))
                     .build();
 
-            guestbookRepository.save(build);
+            guestbookRepository.save(guestbook);
         });
 
         //when
@@ -41,6 +41,27 @@ public class GuestbookRepositoryTest {
             assertThat(guestbook.getContent()).isEqualTo("Content...300");
         }
 
+    }
+
+    @Test
+    public void update() {
+        //given
+        Optional<Guestbook> result = guestbookRepository.findById(300L);
+
+        //when
+        if (result.isPresent()) {
+            Guestbook guestbook = result.get();
+
+            guestbook.changeTitle("Changed Title");
+            guestbook.changeContent("Changed Content");
+
+            guestbookRepository.save(guestbook);
+        }
+
+        Optional<Guestbook> updatedResult = guestbookRepository.findById(300L);
+
+        //then
+        assertThat(updatedResult.get().getTitle()).isEqualTo("Changed Title");
     }
 
 }
