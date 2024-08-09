@@ -1,9 +1,16 @@
 package org.zerock.guestbook.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.zerock.guestbook.entity.Guestbook;
+import org.zerock.guestbook.entity.QGuestbook;
 
 import java.util.Optional;
 import java.util.stream.LongStream;
@@ -62,6 +69,47 @@ public class GuestbookRepositoryTest {
 
         //then
         assertThat(updatedResult.get().getTitle()).isEqualTo("Changed Title");
+    }
+
+    @Test
+    public void findByTitle() {
+        QGuestbook qGuestbook = QGuestbook.guestbook;
+
+        String keyword = "1";
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("gno").descending());
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        BooleanExpression expression = qGuestbook.title.contains(keyword);
+        booleanBuilder.and(expression);
+
+        Page<Guestbook> result = guestbookRepository.findAll(booleanBuilder, pageable);
+
+        result.forEach(guestbook -> {
+            System.out.println("guestbook = " + guestbook);
+        });
+    }
+
+    @Test
+    public void findByMultiConditions() {
+        QGuestbook qGuestbook = QGuestbook.guestbook;
+
+        String keyword = "1";
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("gno").descending());
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        BooleanExpression exTitle = qGuestbook.title.contains(keyword);
+        BooleanExpression exContent = qGuestbook.content.contains(keyword);
+        BooleanExpression exAll = exTitle.or(exContent);
+
+        booleanBuilder.and(exAll);
+        booleanBuilder.and(qGuestbook.gno.gt(0L));
+
+        Page<Guestbook> result = guestbookRepository.findAll(booleanBuilder, pageable);
+
+        result.forEach(guestbook -> {
+            System.out.println("guestbook = " + guestbook);
+        });
+
     }
 
 }
