@@ -6,8 +6,10 @@ import org.zerock.guestbook.dto.PageResultDTO;
 import org.zerock.guestbook.entity.Guestbook;
 
 public interface GuestbookService {
-    Long register(GuestbookDTO guestbookDTO);
+    //등록
+    Long register(GuestbookDTO dto);
 
+    //변환
     default Guestbook dtoToEntity(GuestbookDTO dto) {
         Guestbook entity = Guestbook.builder()
                 .gno(dto.getGno())
@@ -18,7 +20,8 @@ public interface GuestbookService {
 
         return entity;
     }
-
+    
+    //변환
     default GuestbookDTO entityToDto(Guestbook entity) {
         GuestbookDTO dto = GuestbookDTO.builder()
                 .gno(entity.getGno())
@@ -30,5 +33,15 @@ public interface GuestbookService {
         return dto;
     }
 
+    //10개 조회
     PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO);
+
+    //상세 조회
+    GuestbookDTO read(Long gno);
+
+    //삭제
+    void remove(Long gno);
+
+    //수정
+    void modify(GuestbookDTO dto);
 }
