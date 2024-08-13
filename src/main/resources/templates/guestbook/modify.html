@@ -3,10 +3,10 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
-
     <th:block th:fragment="content">
         <h1 class="mt-4">GuestBook Modify Page</h1>
         <form action="/guestbook/modify" method="post">
+            <input type="hidden" name="page" th:value="${requestDTO.page}">
             <div class="form-group">
                 <label>Gno</label>
                 <input type="text" class="form-control" name="gno" th:value="${dto.gno}" readonly>
@@ -44,6 +44,18 @@
             $(".removeBtn").click(function(){
                 actionForm
                     .attr("action", "/guestbook/remove")
+                    .attr("method", "post");
+
+                actionForm.submit();
+            });
+
+            $(".modifyBtn").click(function(){
+                if(!confirm("수정하시겠습니까?")){
+                    return;
+                }
+
+                actionForm
+                    .attr("action", "/guestbook/modify")
                     .attr("method", "post");
 
                 actionForm.submit();
