@@ -41,12 +41,12 @@ public class GuestbookRepositoryTest {
         Optional<Guestbook> result = guestbookRepository.findById(300L);
 
         //then
-        if (result.isPresent()) {
-            Guestbook guestbook = result.get();
+        result.ifPresent(value -> {
+            Guestbook guestbook = value;
 
             assertThat(guestbook.getGno()).isEqualTo(300L);
             assertThat(guestbook.getContent()).isEqualTo("Content...300");
-        }
+        });
 
     }
 
@@ -56,14 +56,14 @@ public class GuestbookRepositoryTest {
         Optional<Guestbook> result = guestbookRepository.findById(300L);
 
         //when
-        if (result.isPresent()) {
-            Guestbook guestbook = result.get();
+        result.ifPresent(value -> {
+            Guestbook guestbook = value;
 
             guestbook.changeTitle("Changed Title");
             guestbook.changeContent("Changed Content");
 
             guestbookRepository.save(guestbook);
-        }
+        });
 
         Optional<Guestbook> updatedResult = guestbookRepository.findById(300L);
 
@@ -73,16 +73,16 @@ public class GuestbookRepositoryTest {
 
     @Test
     public void findByTitle() {
-        QGuestbook qGuestbook = QGuestbook.guestbook;
+        QGuestbook qGuestbook = QGuestbook.guestbook; //1
 
         String keyword = "1";
         Pageable pageable = PageRequest.of(0, 10, Sort.by("gno").descending());
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        BooleanBuilder booleanBuilder = new BooleanBuilder(); //2
 
-        BooleanExpression expression = qGuestbook.title.contains(keyword);
-        booleanBuilder.and(expression);
+        BooleanExpression expression = qGuestbook.title.contains(keyword); //3
+        booleanBuilder.and(expression); //4
 
-        Page<Guestbook> result = guestbookRepository.findAll(booleanBuilder, pageable);
+        Page<Guestbook> result = guestbookRepository.findAll(booleanBuilder, pageable); //5
 
         result.forEach(guestbook -> {
             System.out.println("guestbook = " + guestbook);
@@ -99,17 +99,16 @@ public class GuestbookRepositoryTest {
 
         BooleanExpression exTitle = qGuestbook.title.contains(keyword);
         BooleanExpression exContent = qGuestbook.content.contains(keyword);
-        BooleanExpression exAll = exTitle.or(exContent);
+        BooleanExpression exAll = exTitle.or(exContent); //1
 
-        booleanBuilder.and(exAll);
-        booleanBuilder.and(qGuestbook.gno.gt(0L));
+        booleanBuilder.and(exAll); //2
+        booleanBuilder.and(qGuestbook.gno.gt(0L)); //3
 
         Page<Guestbook> result = guestbookRepository.findAll(booleanBuilder, pageable);
 
         result.forEach(guestbook -> {
             System.out.println("guestbook = " + guestbook);
         });
-
     }
 
 }
