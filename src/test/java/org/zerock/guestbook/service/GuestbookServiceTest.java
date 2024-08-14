@@ -43,8 +43,10 @@ public class GuestbookServiceTest {
     @Test
     public void getList() {
         PageRequestDTO requestDTO = PageRequestDTO.builder()
-                .page(31)
+                .page(1)
                 .size(10)
+                .type("tc")
+                .keyword("한글")
                 .build();
 
         PageResultDTO<GuestbookDTO, Guestbook> resultDTO = guestbookService.getList(requestDTO);

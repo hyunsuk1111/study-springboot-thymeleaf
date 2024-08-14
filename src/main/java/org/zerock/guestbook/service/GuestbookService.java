@@ -1,5 +1,6 @@
 package org.zerock.guestbook.service;
 
+import com.querydsl.core.BooleanBuilder;
 import org.zerock.guestbook.dto.GuestbookDTO;
 import org.zerock.guestbook.dto.PageRequestDTO;
 import org.zerock.guestbook.dto.PageResultDTO;
@@ -32,6 +33,9 @@ public interface GuestbookService {
 
         return dto;
     }
+
+    //검색
+    BooleanBuilder getSearch(PageRequestDTO requestDTO);
 
     //10개 조회
     PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO);
