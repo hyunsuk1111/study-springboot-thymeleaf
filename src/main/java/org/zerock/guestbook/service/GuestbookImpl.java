@@ -57,7 +57,7 @@ public class GuestbookImpl implements GuestbookService {
 
         booleanBuilder.and(expression);
 
-        if ((type != null) || !type.trim().isEmpty()) {
+        if (type != null) {
             BooleanBuilder conditionBuilder = new BooleanBuilder();
 
             if (type.contains("t")) {
