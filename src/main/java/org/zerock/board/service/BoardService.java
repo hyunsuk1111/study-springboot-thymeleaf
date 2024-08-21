@@ -1,14 +1,10 @@
-package org.zerock.guestbook.service;
+package org.zerock.board.service;
 
-import org.springframework.data.domain.PageRequest;
-import org.zerock.guestbook.dto.BoardDTO;
-import org.zerock.guestbook.dto.GuestbookDTO;
+import org.zerock.board.dto.BoardDTO;
 import org.zerock.guestbook.dto.PageRequestDTO;
 import org.zerock.guestbook.dto.PageResultDTO;
-import org.zerock.guestbook.entity.Board;
-import org.zerock.guestbook.entity.Guestbook;
-import org.zerock.guestbook.entity.Member;
-import org.zerock.guestbook.entity.Reply;
+import org.zerock.board.entity.Board;
+import org.zerock.board.entity.Member;
 
 public interface BoardService {
     //등록
@@ -48,4 +44,13 @@ public interface BoardService {
 
     //목록 처리
     PageResultDTO<BoardDTO, Object[]> getList(PageRequestDTO pageRequestDTO);
+
+    //상세 조회
+    BoardDTO get(Long bno);
+
+    //삭제
+    void removeWithReplies(Long bno);
+
+    //수정
+    void modify(BoardDTO boardDTO);
 }

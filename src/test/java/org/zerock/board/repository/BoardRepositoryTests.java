@@ -1,4 +1,4 @@
-package org.zerock.guestbook.repository;
+package org.zerock.board.repository;
 
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -8,8 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.zerock.guestbook.entity.Board;
-import org.zerock.guestbook.entity.Member;
+import org.zerock.board.entity.Board;
+import org.zerock.board.entity.Member;
+import org.zerock.board.repository.BoardRepository;
 
 import java.util.Arrays;
 import java.util.List;

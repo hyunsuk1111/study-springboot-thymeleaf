@@ -1,4 +1,4 @@
-package org.zerock.guestbook.entity;
+package org.zerock.board.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 @Getter
 @ToString
-public class Member extends BaseEntity{
+public class Member extends BaseEntity {
 
     @Id
     private String email;
