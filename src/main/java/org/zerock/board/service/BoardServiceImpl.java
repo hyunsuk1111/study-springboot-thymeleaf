@@ -58,6 +58,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
+    @Transactional
     public void modify(BoardDTO boardDTO) {
         Optional<Board> byId = boardRepository.findById(boardDTO.getBno());
 
