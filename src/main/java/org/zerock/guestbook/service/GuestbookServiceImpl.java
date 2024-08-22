@@ -1,7 +1,6 @@
 package org.zerock.guestbook.service;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +23,7 @@ import java.util.function.Function;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class GuestbookImpl implements GuestbookService {
+public class GuestbookServiceImpl implements GuestbookService {
 
     private final GuestbookRepository guestbookRepository;
 
@@ -47,17 +46,29 @@ public class GuestbookImpl implements GuestbookService {
     }
 
     @Override
+    public PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO) {
+        Pageable pageable = requestDTO.getPageable(Sort.by("gno").descending());
+
+        BooleanBuilder search = getSearch(requestDTO);
+
+        Page<Guestbook> result = guestbookRepository.findAll(search, pageable);
+
+        Function<Guestbook, GuestbookDTO> fn = (this::entityToDto);
+
+        return new PageResultDTO<>(result, fn);
+    }
+
+    @Override
     public BooleanBuilder getSearch(PageRequestDTO requestDTO) {
         String type = requestDTO.getType();
         String keyword = requestDTO.getKeyword();
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         QGuestbook qGuestbook = QGuestbook.guestbook;
-        BooleanExpression expression = qGuestbook.gno.gt(0L);
 
-        booleanBuilder.and(expression);
-
-        if (type != null) {
+        if (type == null) {
+            booleanBuilder.and(qGuestbook.gno.gt(0L));
+        } else{
             BooleanBuilder conditionBuilder = new BooleanBuilder();
 
             if (type.contains("t")) {
@@ -74,19 +85,6 @@ public class GuestbookImpl implements GuestbookService {
         }
 
         return booleanBuilder;
-    }
-
-    @Override
-    public PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO) {
-        Pageable pageable = requestDTO.getPageable(Sort.by("gno").descending());
-
-        BooleanBuilder search = getSearch(requestDTO);
-
-        Page<Guestbook> result = guestbookRepository.findAll(search, pageable);
-
-        Function<Guestbook, GuestbookDTO> fn = (this::entityToDto);
-
-        return new PageResultDTO<>(result, fn);
     }
 
     @Override
@@ -117,11 +115,8 @@ public class GuestbookImpl implements GuestbookService {
             throw new IllegalArgumentException("DTO must not be null");
         }
 
-        Guestbook entity = guestbookRepository.findById(dto.getGno())
-                .orElseThrow(() -> new EntityNotFoundException("Guestbook entity with ID " + dto.getGno() + " not found."));
-
-        entity.changeTitle(dto.getTitle());
-        entity.changeContent(dto.getContent());
+        //수정
+        Guestbook entity = updateDetails(dto);
 
         try {
             guestbookRepository.save(entity);
@@ -129,5 +124,15 @@ public class GuestbookImpl implements GuestbookService {
             throw new RuntimeException("Failed to update entity with ID " + dto.getGno(), e);
         }
 
+    }
+
+    private Guestbook updateDetails(GuestbookDTO dto) {
+        Guestbook entity = guestbookRepository.findById(dto.getGno())
+                .orElseThrow(() -> new EntityNotFoundException("Guestbook entity with ID " + dto.getGno() + " not found."));
+
+        entity.changeTitle(dto.getTitle());
+        entity.changeContent(dto.getContent());
+
+        return entity;
     }
 }

@@ -65,4 +65,24 @@ public class GuestbookServiceTest {
 
     }
 
+    @Test
+    public void modify() {
+        //given
+        GuestbookDTO dto = GuestbookDTO.builder()
+                .gno(1L)
+                .title("changed title")
+                .content("changed content")
+                .build();
+
+        guestbookService.modify(dto);
+
+        //when
+        Optional<Guestbook> byId = guestbookRepository.findById(1L);
+
+        //then
+        byId.ifPresent(guestbook -> {
+            assertThat(guestbook.getTitle()).isEqualTo("changed title");
+        });
+    }
+
 }
