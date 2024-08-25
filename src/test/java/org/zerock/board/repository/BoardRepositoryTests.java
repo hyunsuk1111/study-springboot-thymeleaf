@@ -107,4 +107,11 @@ public class BoardRepositoryTests {
     public void search() {
         boardRepository.search();
     }
+
+    @Test
+    public void searchPage() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("bno").descending());
+
+        Page<Object[]> result = boardRepository.searchPage("t", "1", pageable);
+    }
 }
