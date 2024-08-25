@@ -102,4 +102,9 @@ public class BoardRepositoryTests {
 
         System.out.println("Arrays.toString(result) = " + Arrays.toString(result));
     }
+
+    @Test
+    public void search() {
+        boardRepository.search();
+    }
 }

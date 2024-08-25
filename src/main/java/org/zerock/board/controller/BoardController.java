@@ -42,12 +42,30 @@ public class BoardController {
         return "redirect:/board/list";
     }
 
-    @GetMapping("/read")
-    public String read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long bno, Model model) {
+    @GetMapping({"/read", "modify"})
+    public void read(@ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, Long bno, Model model) {
         BoardDTO dto = boardService.get(bno);
 
         model.addAttribute("dto", dto);
+    }
 
-        return "board/read";
+    @PostMapping("/remove")
+    public String remove(long bno, RedirectAttributes redirectAttributes) {
+        boardService.removeWithReplies(bno);
+
+        return "redirect:/board/list";
+    }
+
+    @PostMapping("/modify")
+    public String modify(BoardDTO dto, @ModelAttribute("requestDTO") PageRequestDTO pageRequestDTO, RedirectAttributes redirectAttributes) {
+        boardService.modify(dto);
+
+        redirectAttributes.addAttribute("page", pageRequestDTO.getPage());
+        redirectAttributes.addAttribute("type", pageRequestDTO.getType());
+        redirectAttributes.addAttribute("keyword", pageRequestDTO.getKeyword());
+
+        redirectAttributes.addAttribute("bno", dto.getBno());
+
+        return "redirect:/board/read";
     }
 }
