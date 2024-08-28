@@ -2,11 +2,16 @@ package org.zerock.board.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.zerock.board.entity.Board;
 import org.zerock.board.entity.QBoard;
@@ -14,6 +19,7 @@ import org.zerock.board.entity.QMember;
 import org.zerock.board.entity.QReply;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.zerock.board.entity.QBoard.board;
 
@@ -56,7 +62,7 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
         jpqlQuery.leftJoin(member).on(board.writer.eq(member));
         jpqlQuery.leftJoin(reply).on(reply.board.eq(board));
 
-        JPQLQuery<Tuple> tuple = jpqlQuery.select(board, member.email, reply.count());
+        JPQLQuery<Tuple> tuple = jpqlQuery.select(board, member, reply.count());
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         booleanBuilder.and(board.bno.gt(0L));
@@ -66,12 +72,22 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
         }
 
         tuple.where(booleanBuilder);
+        //정렬 처리
+        sortItems(tuple, pageable);
         tuple.groupBy(board);
 
+        //page 처리
+        tuple.offset(pageable.getOffset());
+        tuple.limit(pageable.getPageSize());
+
         List<Tuple> result = tuple.fetch();
+        long count = tuple.fetchCount();
 
         log.info(result);
-        return null;
+
+        return new PageImpl<Object[]>(
+                result.stream().map(t -> t.toArray()).collect(Collectors.toList()), pageable, count
+        );
     }
 
 
@@ -99,5 +115,18 @@ public class SearchBoardRepositoryImpl extends QuerydslRepositorySupport impleme
             default:
                 return null;
         }
+    }
+
+    private void sortItems(JPQLQuery<Tuple> tuple, Pageable pageable) {
+        Sort sort = pageable.getSort();
+
+        sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            String property = order.getProperty();
+
+            PathBuilder orderByExpression = new PathBuilder(Board.class, "board");
+
+            tuple.orderBy(new OrderSpecifier(direction, orderByExpression.get(property)));
+        });
     }
 }
