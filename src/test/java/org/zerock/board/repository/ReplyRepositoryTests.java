@@ -7,6 +7,7 @@ import org.zerock.board.entity.Board;
 import org.zerock.board.entity.Reply;
 import org.zerock.board.repository.ReplyRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -52,5 +53,16 @@ public class ReplyRepositoryTests {
 
         System.out.println("reply = " + reply);
         System.out.println("replyBoard = " + reply.getBoard());
+    }
+
+    @Test
+    public void getRepliesByBoardOderByRno() {
+        List<Reply> replyList = replyRepository.getRepliesByBoardOrderByRno(Board.builder()
+                .bno(97L)
+                .build());
+
+        replyList.forEach(reply -> {
+            System.out.println("reply = " + reply);
+        });
     }
 }

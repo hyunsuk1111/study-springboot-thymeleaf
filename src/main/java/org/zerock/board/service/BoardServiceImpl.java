@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.board.dto.BoardDTO;
+import org.zerock.board.repository.ReplyRepository;
 import org.zerock.guestbook.dto.PageRequestDTO;
 import org.zerock.guestbook.dto.PageResultDTO;
 import org.zerock.board.entity.Board;
@@ -20,6 +21,7 @@ import java.util.function.Function;
 public class BoardServiceImpl implements BoardService{
 
     private final BoardRepository boardRepository;
+    private final ReplyRepository replyRepository;
 
     @Override
     public Long register(BoardDTO dto) {
@@ -53,7 +55,7 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public void removeWithReplies(Long bno) {
-        boardRepository.deleteReplyByBno(bno);
+        replyRepository.deleteReplyByBno(bno);
 
         boardRepository.deleteById(bno);
     }

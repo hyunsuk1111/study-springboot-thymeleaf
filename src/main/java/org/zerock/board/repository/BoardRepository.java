@@ -33,8 +33,4 @@ public interface BoardRepository extends JpaRepository<Board, Long>, SearchBoard
             " LEFT JOIN Reply r ON r.board = b " +
             " WHERE b.bno =:bno")
     Object getBoardByBno(@Param("bno") Long bno);
-
-    @Modifying
-    @Query("DELETE FROM Reply r WHERE r.board.bno =:bno")
-    void deleteReplyByBno(@Param("bno") Long bno);
 }

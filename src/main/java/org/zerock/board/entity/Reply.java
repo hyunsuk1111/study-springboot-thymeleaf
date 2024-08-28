@@ -21,7 +21,7 @@ public class Reply extends BaseEntity {
     @Column
     private String replyer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Board board;
 
 }
