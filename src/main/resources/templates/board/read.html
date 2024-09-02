@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 <th:block th:replace="~{/layout/basic :: setContent(~{this::content} )}">
     <th:block th:fragment="content">
         <h1 class="mt-4">board Read Page</h1>
@@ -34,5 +34,49 @@
         <a th:href="@{/board/list(page=${requestDTO.page}, type=${requestDTO.type}, keyword=${requestDTO.keyword}) }">
             <button type="button" class="btn btn-info">List</button>
         </a>
+        <div>
+            <div class="mt-4">
+                <button type="button" class="btn btn-info replyCount">Reply Count [[${dto.replyCount}]]</button>
+            </div>
+            <div class="list-group replyList">
+            </div>
+        </div>
+        <script th:inline="javascript">
+            $(document).ready(function() {
+            let bno = [[${dto.bno}]];
+
+            let listGroup = $(".replyList");
+
+            function formatTime(str) {
+                let date = new Date(str);
+                return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
+            }
+
+            function loadJSONData() {
+                $.getJSON('/replies/board/'+bno, function(arr) {
+                    console.log(arr);
+
+                    let str="";
+
+                    $('.replyCount').html(" Reply Count  " + arr.length);
+
+                    $.each(arr, function(idx, reply) {
+                        console.log(reply);
+
+                        str += '   <div class = "card-body" data-rno = "'+reply.rno+'"><b>'+reply.rno +'</b>';
+                        str += '   <h5 class = "card-title">'+reply.text+'</h5>';
+                        str += '   <h6 class = "card-subtitle mb-2 text-muted">'+reply.replier+'</h6>';
+                        str += '   <p class = "card-text">'+ formatTime(reply.regDate)+'</p>';
+                        str += '  </div>';
+                        })
+                         listGroup.html(str);
+                     });
+                }
+
+                $(".replyCount").click(function() {
+                    loadJSONData();
+                 })
+             });
+        </script>
     </th:block>
 </th:block>
