@@ -36,9 +36,37 @@
         </a>
         <div>
             <div class="mt-4">
+                <button type="button" class="btn btn-info addReply">Add Reply</button>
                 <button type="button" class="btn btn-info replyCount">Reply Count [[${dto.replyCount}]]</button>
             </div>
             <div class="list-group replyList">
+            </div>
+        </div>
+        <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="replyText" placeholder="Reply Text...">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="replier" placeholder="Replier">
+                            <input type="hidden" name="rno">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger replyRemove">Remove</button>
+                        <button type="button" class="btn btn-warning replyModify">Modify</button>
+                        <button type="button" class="btn btn-primary replySave">Save</button>
+                        <button type="button" class="btn btn-outline-secondary replyClose" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
         <script th:inline="javascript">
@@ -71,12 +99,52 @@
                         })
                          listGroup.html(str);
                      });
-                }
+                }//endLoadJSONData
 
                 $(".replyCount").click(function() {
                     loadJSONData();
-                 })
-             });
+                 })//endClick
+
+                 let modal = $('.modal');
+
+                $(".addReply").click(function() {
+                    modal.modal('show');
+
+                    $('input[name="replyText"]').val('');
+                    $('input[name="replier"]').val('');
+
+                    $(".modal-footer .btn").hide();
+                    $(".replySave, .replyClose").show();
+                })//endClick
+
+                $(".replySave").click(function() {
+                    let reply = {
+                        bno: bno,
+                        text: $('input[name="replyText"]').val(),
+                        replyer : $('input[name="replier"]').val()
+                    }//endReply
+
+                    console.log(reply);
+
+                    $.ajax({
+                        url: '/replies',
+                        method: 'post',
+                        data: JSON.stringify(reply),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function(data) {
+                            console.log(data);
+
+                            let newRno = parseInt(data);
+
+                            alert(newRno + "번 댓글이 등록되었습니다.")
+                            modal.modal('hide');
+                            loadJSONData();
+                        }
+                    })//endAjax
+                })//endClick
+
+             });//endDocument
         </script>
     </th:block>
 </th:block>
