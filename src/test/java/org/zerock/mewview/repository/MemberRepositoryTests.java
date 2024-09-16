@@ -17,7 +17,7 @@ public class MemberRepositoryTests {
     private MemberRepository memberRepository;
 
     @Test
-    public void insertMembers() {
+    public void insertMembers1() {
         IntStream.rangeClosed(1, 100).forEach(i -> {
             Member member = Member.builder()
                     .email("r" + i + "@zerock.org")
