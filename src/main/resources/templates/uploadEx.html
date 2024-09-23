@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<input name="uploadFiles" type="file" multiple>
+<button class="uploadBtn">Upload</button>
+<script>
+    $('.uploadBtn').click(function() {
+        let formData = new FormData();
+
+        let inputFile = $("input[type='file']");
+
+        let files = inputFile[0].files;
+
+        for(let i = 0; i < files.length; i++) {
+            console.log(files[i]);
+            formData.append("uploadFiles", files[i]);
+        }
+    });
+</script>
+</body>
+</html>
