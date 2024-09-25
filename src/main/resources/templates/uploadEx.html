@@ -11,16 +11,31 @@
 <button class="uploadBtn">Upload</button>
 <script>
     $('.uploadBtn').click(function() {
-        let formData = new FormData();
+        var formData = new FormData();
 
-        let inputFile = $("input[type='file']");
+        var inputFile = $("input[type='file']");
 
-        let files = inputFile[0].files;
+        var files = inputFile[0].files;
 
-        for(let i = 0; i < files.length; i++) {
+        for(var i = 0; i < files.length; i++) {
             console.log(files[i]);
             formData.append("uploadFiles", files[i]);
         }
+
+        $.ajax({
+            url: '/uploadAjax',
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'json',
+            success: function(result) {
+                console.log(result);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
     });
 </script>
 </body>
