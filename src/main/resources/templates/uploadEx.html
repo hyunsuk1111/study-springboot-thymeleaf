@@ -11,13 +11,13 @@
 <button class="uploadBtn">Upload</button>
 <script>
     $('.uploadBtn').click(function() {
-        var formData = new FormData();
+        let formData = new FormData();
 
-        var inputFile = $("input[type='file']");
+        let inputFile = $("input[type='file']");
 
-        var files = inputFile[0].files;
+        let files = inputFile[0].files;
 
-        for(var i = 0; i < files.length; i++) {
+        for(let i = 0; i < files.length; i++) {
             console.log(files[i]);
             formData.append("uploadFiles", files[i]);
         }
