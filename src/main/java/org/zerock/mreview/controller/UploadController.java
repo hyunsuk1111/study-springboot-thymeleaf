@@ -2,9 +2,13 @@ package org.zerock.mreview.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.zerock.mreview.dto.UploadResultDTO;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,8 +27,13 @@ public class UploadController {
     @Value("${org.zerock.upload.path}")
     private String uploadPath;
 
+    private String uuid;
+
     @PostMapping("/uploadAjax")
-    public void uploadFile(MultipartFile[] uploadFiles) {
+    public ResponseEntity<List<UploadResultDTO>> uploadFile(MultipartFile[] uploadFiles) {
+
+        List<UploadResultDTO> list = new ArrayList<>();
+
         for (MultipartFile uploadFile : uploadFiles) {
             isValidImageType(uploadFile);
 
@@ -39,20 +50,23 @@ public class UploadController {
 
             // 파일 저장
             saveFile(uploadFile, savePath);
+            list.add(new UploadResultDTO(fileName, uuid, folderPath));
 
             log.info("fileName : " + fileName);
         }//endFor
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
     private String extractFileName(String originalName) {
         return originalName.substring(originalName.lastIndexOf("\\") + 1);
     }
 
-    private boolean isValidImageType(MultipartFile uploadFile) {
+    private ResponseEntity isValidImageType(MultipartFile uploadFile) {
         if (!uploadFile.getContentType().startsWith("image")) {
             log.warn("this file is not image type");
-            return false;
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        return true;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private String makeFolder() {
@@ -73,13 +87,14 @@ public class UploadController {
     }
 
     private String createSaveName(String folderPath, String fileName) {
-        String uuid = UUID.randomUUID().toString();
+        uuid = UUID.randomUUID().toString();
         return Paths.get(uploadPath, folderPath, uuid + "_" + fileName).toString();
     }
 
     private void saveFile(MultipartFile uploadFile, Path savePath) {
         try {
             uploadFile.transferTo(savePath);
+
         } catch (IOException e){
             e.printStackTrace();
         }
