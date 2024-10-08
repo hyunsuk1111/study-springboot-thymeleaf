@@ -2,16 +2,23 @@ package org.zerock.mreview.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.mreview.dto.UploadResultDTO;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -57,6 +64,46 @@ public class UploadController {
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+
+    @GetMapping("/display")
+    public ResponseEntity<byte[]> getFile(String fileName) {
+        try {
+            String srcFileName = URLDecoder.decode(fileName, "UTF-8");
+
+            File file = getFileObj(srcFileName);
+
+            log.info("file : " + file);
+
+            HttpHeaders headers = getHeaders(file);
+
+            byte[] fileContent = FileCopyUtils.copyToByteArray(file);
+
+            return new ResponseEntity<>(fileContent, headers, HttpStatus.OK);
+        } catch (FileNotFoundException e) {
+            log.error("File not found: " + fileName, e);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            log.error("File I/O error: " + fileName, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    private File getFileObj(String srcFileName) throws UnsupportedEncodingException {
+        log.info("srcFileName : " + srcFileName);
+
+        File file = new File(uploadPath + File.separator + srcFileName);
+
+        return file;
+    }
+
+    private static HttpHeaders getHeaders(File file) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+
+        //MIME 타입 처리
+        headers.add("Content-Type", Files.probeContentType(file.toPath()));
+
+        return headers;
+    }
+
     private String extractFileName(String originalName) {
         return originalName.substring(originalName.lastIndexOf("\\") + 1);
     }
@@ -99,5 +146,7 @@ public class UploadController {
             e.printStackTrace();
         }
     }
+
+
 
 }
