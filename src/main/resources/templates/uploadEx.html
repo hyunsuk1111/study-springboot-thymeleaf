@@ -7,36 +7,48 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-<input name="uploadFiles" type="file" multiple>
-<button class="uploadBtn">Upload</button>
-<script>
-    $('.uploadBtn').click(function() {
-        let formData = new FormData();
+    <input name="uploadFiles" type="file" multiple>
+    <button class="uploadBtn">Upload</button>
+    <div class="uploadResult"></div>
 
-        let inputFile = $("input[type='file']");
+    <script>
+        $('.uploadBtn').click(function() {
+            let formData = new FormData();
 
-        let files = inputFile[0].files;
+            let inputFile = $("input[type='file']");
 
-        for(let i = 0; i < files.length; i++) {
-            console.log(files[i]);
-            formData.append("uploadFiles", files[i]);
-        }
+            let files = inputFile[0].files;
 
-        $.ajax({
-            url: '/uploadAjax',
-            processData: false,
-            contentType: false,
-            data: formData,
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                console.log(result);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(textStatus);
-            }
-        });
-    });
-</script>
-</body>
+            for(let i = 0; i < files.length; i++) {
+                console.log(files[i]);
+                formData.append("uploadFiles", files[i]);
+            }//endFor
+
+            $.ajax({
+                url: '/uploadAjax',
+                processData: false,
+                contentType: false,
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function(result) {
+                    showUploadImages(result);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            });//endAjax
+        });//endClick
+
+        function showUploadImages(arr) {
+            console.log(arr);
+
+            let divArea = $(".uploadResult");
+
+            for(let start = 0; start < arr.length; start++){
+                divArea.append("<img src='/display?fileName="+arr[start].imageURL+"'>");
+            }//endFor
+        }//endFunction
+    </script>
+    </body>
 </html>
