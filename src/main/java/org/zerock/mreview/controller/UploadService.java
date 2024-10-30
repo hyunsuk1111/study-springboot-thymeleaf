@@ -34,6 +34,13 @@ public class UploadService {
         return file;
     }
 
+    public File getThumbnailObj(File file, String prefix) throws UnsupportedEncodingException {
+
+        File thumbnail = new File(file.getParent(), prefix + "_" + file.getName());
+
+        return thumbnail;
+    }
+
     public HttpHeaders getHeaders(File file) throws IOException {
         HttpHeaders headers = new HttpHeaders();
 

@@ -44,11 +44,30 @@
             console.log(arr);
 
             let divArea = $(".uploadResult");
+            let str = "";
 
             for(let start = 0; start < arr.length; start++){
-                divArea.append("<img src='/display?fileName="+arr[start].imageURL+"'>");
+                str += "<div>";
+                str += "<img src='/display?fileName="+arr[start].thumbnailURL+"'>";
+                str += "<button class='removeBtn' data-name='" + arr[start].imageURL + "'>REMOVE</button>";
+                str += "</div>";
             }//endFor
+                divArea.append(str);
         }//endFunction
+
+        $(".uploadResult").on("click", ".removeBtn", function(e) {
+            let target = $(this);
+            let fileName = target.data("name");
+            let targetDiv = target.closest("div");
+
+            $.post('/removeFile', {fileName: fileName}, function(result) {
+                console.log(result);
+
+                if(result){
+                    targetDiv.remove();
+                }
+            })
+        });//endClick
     </script>
-    </body>
+</body>
 </html>

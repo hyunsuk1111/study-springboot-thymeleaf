@@ -15,6 +15,7 @@ import org.zerock.mreview.dto.UploadResultDTO;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +36,7 @@ public class UploadController {
         List<UploadResultDTO> list = new ArrayList<>();
 
         for (MultipartFile uploadFile : uploadFiles) {
-            if(!uploadService.isValidImageType(uploadFile)){
+            if (!uploadService.isValidImageType(uploadFile)) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
 
@@ -55,7 +56,7 @@ public class UploadController {
             // 파일 저장
             uploadService.saveFile(uploadFile, savePath);
             //섬네일생성
-            uploadService.createThumbnail(folderPath,uuid, fileName, savePath);
+            uploadService.createThumbnail(folderPath, uuid, fileName, savePath);
 
             list.add(new UploadResultDTO(fileName, uuid, folderPath));
 
@@ -84,7 +85,36 @@ public class UploadController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (IOException e) {
             log.error("File I/O error: " + fileName, e);
-             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/removeFile")
+    public ResponseEntity<Boolean> removeFile(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+
+        String srcFileName = null;
+
+        try {
+            srcFileName = URLDecoder.decode(fileName, "UTF-8");
+
+            File file = uploadService.getFileObj(srcFileName);
+            File thumbnail = uploadService.getThumbnailObj(file, "s");
+
+            boolean fileDeleted = file.delete();
+            boolean thumbnailDeleted = thumbnail.delete();
+
+            if (fileDeleted && thumbnailDeleted) {
+                return new ResponseEntity<>(true, HttpStatus.OK);
+            } else {
+                log.warn("File or thumbnail deletion failed: fileDeleted={}, thumbnailDeleted={}", fileDeleted, thumbnailDeleted);
+                return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (UnsupportedEncodingException e) {
+            return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
