@@ -85,8 +85,8 @@ public class UploadService {
     }
 
     //섬네일파일명생성
-    public String createSaveName(String folderPath, String uuid, String fileName, String prefix) {
-        return Paths.get(uploadPath, folderPath, prefix + "_" + uuid + "_" + fileName).toString();
+    public String createSaveName(String folderPath, String uuid, String fileName, String thumbnailPrefix) {
+        return Paths.get(uploadPath, folderPath, thumbnailPrefix + "_" + uuid + "_" + fileName).toString();
     }
 
     public void saveFile(MultipartFile uploadFile, Path savePath) throws IOException {
