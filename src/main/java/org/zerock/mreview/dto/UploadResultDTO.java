@@ -16,21 +16,19 @@ public class UploadResultDTO implements Serializable {
     private String folderPath;
 
     public String getImageURL() {
-        try{
-            return URLEncoder.encode(folderPath + "/" + uuid + "_" + fileName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return this.getEncodePath("/" + uuid + "_" + fileName);
     }
 
     public String getThumbnailURL() {
+        return this.getEncodePath("/s_" + uuid + "_" + fileName);
+    }
+
+    private String getEncodePath(String path) {
         try {
-            return URLEncoder.encode(folderPath + "/s_" + uuid + "_" + fileName, "UTF-8");
+            return URLEncoder.encode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
-        return "";
+        return  "";
     }
 }
