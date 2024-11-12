@@ -17,8 +17,10 @@ public interface MovieService {
     default Map<String, Object> dtoToEntity(MovieDTO movieDTO) {
         Map<String, Object> entityMap = new HashMap<>();
 
-        entityMap.put("movie", this.getMovieEntity(movieDTO));
-        entityMap.put("imgList", this.getMovieImageEntity(movieDTO));
+        Movie movie = this.getMovieEntity(movieDTO);
+
+        entityMap.put("movie", movie);
+        entityMap.put("imgList", this.getMovieImageEntity(movieDTO, movie));
 
         return entityMap;
     }
@@ -30,16 +32,17 @@ public interface MovieService {
                 .build();
     }
 
-    private List<MovieImage> getMovieImageEntity(MovieDTO movieDTO) {
+    private List<MovieImage> getMovieImageEntity(MovieDTO movieDTO, Movie movie) {
         List<MovieImageDTO> imageDTOList = movieDTO.getImageDTOList();
         List<MovieImage> movieImageList = null;
 
         if (imageDTOList != null && !imageDTOList.isEmpty()) {
             movieImageList = imageDTOList.stream().map(movieImageDTO -> {
                 MovieImage movieImage = MovieImage.builder()
-                        .path(movieImageDTO.getFolderPath())
+                        .path(movieImageDTO.getPath())
                         .imgName(movieImageDTO.getImgName())
                         .uuid(movieImageDTO.getUuid())
+                        .movie(movie)
                         .build();
                 return movieImage;
             }).collect(Collectors.toList());

@@ -29,7 +29,7 @@ public class UploadService {
     public File getFileObj(String srcFileName) throws UnsupportedEncodingException {
         log.info("srcFileName : " + srcFileName);
 
-        File file = new File(uploadPath + File.separator + srcFileName);
+        File file = new File(uploadPath + "/" + srcFileName);
 
         return file;
     }
@@ -64,12 +64,12 @@ public class UploadService {
 
     public String makeFolder() {
         String format = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-        String folderPath = format.replace("/", File.separator);
+        //String folderPath = format.replace("/", File.separator);
 
-        File uploadPathFolder = new File(uploadPath, folderPath);
+        File uploadPathFolder = new File(uploadPath, format);
         createDirectoryIfNotExists(uploadPathFolder);
 
-        return folderPath;
+        return format;
     }
 
     public void createDirectoryIfNotExists(File directory) {

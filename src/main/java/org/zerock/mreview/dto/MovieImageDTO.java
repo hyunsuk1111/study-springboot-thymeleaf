@@ -15,14 +15,14 @@ import java.net.URLEncoder;
 public class MovieImageDTO {
     private String imgName;
     private String uuid;
-    private String folderPath;
+    private String path;
 
     public String getImageURL() {
-        return this.getEncodePath("/" + uuid + "_" + imgName);
+        return this.getEncodePath(path + "/" + uuid + "_" + imgName);
     }
 
     public String getThumbnailURL() {
-        return this.getEncodePath("/s_" + uuid + "_" + imgName);
+        return this.getEncodePath(path + "/s_" + uuid + "_" + imgName);
     }
 
     private String getEncodePath(String path) {
