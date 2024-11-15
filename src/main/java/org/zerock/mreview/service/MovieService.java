@@ -18,7 +18,6 @@ public interface MovieService {
 
     PageResultDTO<MovieDTO, Object[]> getListPage(Pageable pageable);
 
-    //Map 타입으로 변환
     default Map<String, Object> dtoToEntity(MovieDTO movieDTO) {
         Map<String, Object> entityMap = new HashMap<>();
 
