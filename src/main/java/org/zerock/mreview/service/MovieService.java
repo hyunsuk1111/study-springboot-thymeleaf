@@ -3,6 +3,7 @@ package org.zerock.mreview.service;
 import org.springframework.data.domain.Pageable;
 import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.MovieImageDTO;
+import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.dto.PageResultDTO;
 import org.zerock.mreview.entity.Movie;
 import org.zerock.mreview.entity.MovieImage;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 public interface MovieService {
     Long register(MovieDTO movieDTO);
 
-    PageResultDTO<MovieDTO, Object[]> getListPage(Pageable pageable);
+    PageResultDTO<MovieDTO, Object[]> getListPage(PageRequestDTO pageRequestDTO);
 
     default Map<String, Object> dtoToEntity(MovieDTO movieDTO) {
         Map<String, Object> entityMap = new HashMap<>();
